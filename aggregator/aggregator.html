@@ -1,0 +1,60 @@
+<script type="text/javascript">
+    RED.nodes.registerType('aggregator',{
+        category: 'analysis',
+        color: '#E2D96E',
+        defaults: {
+            name: {value:""},
+            topic: {value:""},
+            "intervalCount": {value: 1, required: true, validate: RED.validators.number()},
+            "intervalUnits": {value: "h", required: true },
+            submitIncompleteInterval: {value: true },
+            aggregationType: {value: "mean"}
+        },
+        inputs:1,
+        outputs:1,
+        icon: "arrow-in.png",
+        label: function() {
+            return this.name||"aggregator";
+        }
+    });
+</script>
+
+<script type="text/x-red" data-template-name="aggregator">
+    <div class="form-row">
+        <label for="node-input-aggregationType"><i class="fa fa-dot-circle-o"></i> Aggregate by</label>
+        <select style="width: 70%" id="node-input-aggregationType">
+            <option value="mean">Mean value (Average)</option>
+            <option value="geometricMean">Geometric mean value</option>
+            <option value="harmonicMean">Harmonic mean value</option>
+            <option value="median">Median value</option>
+            <option value="min">Minimum value</option>
+            <option value="max">Maximum value</option>
+        </select>
+    </div>
+    <div class="form-row inject-time-row" id="inject-time-row-interval">
+        <span data-i18n="inject.every"></span>
+        <input id="node-input-intervalCount" class="inject-time-count" value="1"></input>
+        <select style="width: 100px" id="node-input-intervalUnits">
+            <option value="s" data-i18n="inject.seconds">seconds</option>
+            <option value="m" data-i18n="inject.minutes">minutes</option>
+            <option value="h" data-i18n="inject.hours">hours</option>
+            <option value="d">days</option>
+        </select><br/>
+    </div>
+    <div class="form-row">
+        <label style="width: auto" for="node-input-submitIncompleteInterval">Submit incomplete interval on start?</label></input>
+        <input style="width: 50px" type="checkbox" id="node-input-submitIncompleteInterval">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="common.label.topic"></span></label>
+        <input type="text" id="node-input-topic" style="width: 70%x">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="aggregator">
+    <p>A node that combines multiple input messages over a time-span to one output message according to the specified combination logic</p>
+</script>
