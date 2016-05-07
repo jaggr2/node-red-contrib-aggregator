@@ -10,5 +10,10 @@
   "license": "Apache 2.0",
   "dependencies": {
     "simple-statistics": "^1.0.1"
+  },
+  "node-red" : {
+    "nodes": {
+      "aggregator": "aggregator/aggregator.js"
+    }
   }
 }
