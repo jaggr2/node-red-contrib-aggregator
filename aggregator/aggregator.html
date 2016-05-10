@@ -56,5 +56,17 @@
 </script>
 
 <script type="text/x-red" data-help-name="aggregator">
-    <p>A node that combines multiple input messages over a time-span to one output message according to the specified combination logic</p>
+    <p>A node that combines multiple input messages over a time-span to one output message according to the specified aggregation method </p>
+    <p>The aggregator stores the retrieved values per topic for the pending time span. He assumes that every topic has the same mightiness,
+    regardless of how many values he retrieved per topic. Once the time span times out, this assumption leads to the following calculation of all retrieved values:
+        <ol>
+            <li>Aggregation of all retrieved values per topic by the defined aggregation method</li>
+            <li>Aggregation of the aggregation results of each topic again by the defined aggregation method</li>
+        </ol>
+    </p>
+    <p>topic and error handling:<br />
+        <ol>
+        <li>msg.topic is handled case insensitive (converted to LowerCase)</li>
+        <li>if the msg.payload doesn't contain a number, the aggregator node raises an exception which can be caught with the Catch node</li>
+    </p>
 </script>
