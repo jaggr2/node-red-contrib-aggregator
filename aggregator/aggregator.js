@@ -1,8 +1,8 @@
 var simpleStatistics = require('simple-statistics');
 
-module.exports = function(RED) {
+module.exports = function (RED) {
     function AggregatorNode(config) {
-        RED.nodes.createNode(this,config);
+        RED.nodes.createNode(this, config);
         var node = this;
 
         node.intervalCount = config["interval-count"];
@@ -10,7 +10,7 @@ module.exports = function(RED) {
         node.absoluteStartupTime = new Date().getTime();
         node.factor = 1;
 
-        switch(config.intervalUnits) {
+        switch (config.intervalUnits) {
             case "s":
                 node.factor = 1000;
                 break;
@@ -24,18 +24,18 @@ module.exports = function(RED) {
                 node.factor = 1000 * 60 * 60 * 24;
                 break;
         }
-        node.intervalTime = node.factor * config.intervalCount;
-        node.startupTime = node.intervalTime - (node.absoluteStartupTime % node.intervalTime);
+        node.intervalTimeout = node.factor * config.intervalCount;
+        node.startupTimeout = node.intervalTimeout - (node.absoluteStartupTime % node.intervalTimeout);
 
         node.values = {};
 
-        node.aggregate = function(list) {
+        node.aggregate = function (list) {
 
             var output = null;
 
-            if(list.length == 0) return null;
+            if (list.length == 0) return null;
 
-            switch(config.aggregationType) {
+            switch (config.aggregationType) {
                 case "mean":
                     output = simpleStatistics.mean(list);
                     break;
@@ -64,20 +64,20 @@ module.exports = function(RED) {
             return output;
         };
 
-        node.aggregateAll = function() {
+        node.aggregateAll = function () {
             var results = [];
 
-            for (var topic in node.values ) {
+            for (var topic in node.values) {
                 if (node.values.hasOwnProperty(topic)) {
                     var result = node.aggregate(node.values[topic]);
 
-                    if(result) results.push(result);
+                    if (result) results.push(result);
                 }
             }
 
             var output = node.aggregate(results);
 
-            if(output) {
+            if (output) {
                 node.send({
                     topic: config.topic,
                     payload: output
@@ -87,42 +87,35 @@ module.exports = function(RED) {
             node.values = {};
         };
 
-        node.primaryTimeout = setTimeout(function() {
+        node.primaryTimeout = setTimeout(function () {
 
-            node.interval = setInterval(node.aggregateAll, node.intervalTime);
+            node.interval = setInterval(node.aggregateAll, node.intervalTimeout);
 
-            if(node.submitIncompleteInterval) node.aggregateAll();
+            if (node.submitIncompleteInterval) node.aggregateAll();
 
-        }, node.startupTime);
+        }, node.startupTimeout);
 
-        this.on('input', function(msg) {
-          try {
+        this.on('input', function (msg) {
+            try {
                 if (msg.payload != null && msg.payload != '') {
                     var lowerTopic = msg.topic.toString().toLowerCase();
 
-                    if(!node.values[lowerTopic]) {
+                    if (!node.values[lowerTopic]) {
                         node.values[lowerTopic] = [];
                     }
-                    node.values[lowerTopic].push(parseInt(msg.payload,10));
+                    node.values[lowerTopic].push(parseInt(msg.payload, 10));
                 }
 
-                  if(node.values.length <= 1) {
-                      setTimeout(function(theNode) {
-
-
-
-                      }, config.timeoutInMS, node);
-                  }
-                  
-            } catch(err) {
+            } catch (err) {
                 node.error(err.message);
             }
         });
 
-        this.on('close', function() {
+        this.on('close', function () {
             clearTimeout(node.primaryTimeout);
             clearInterval(node.interval);
         });
     }
-    RED.nodes.registerType("aggregator",AggregatorNode);
+
+    RED.nodes.registerType("aggregator", AggregatorNode);
 };
