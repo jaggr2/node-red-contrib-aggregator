@@ -33,7 +33,7 @@ module.exports = function (RED) {
 
             var output = null;
 
-            if (list.length == 0) return null;
+            if (list.length === 0) return null;
 
             switch (config.aggregationType) {
                 case "mean":
@@ -97,13 +97,13 @@ module.exports = function (RED) {
 
         this.on('input', function (msg) {
             try {
-                if (msg.payload != null && msg.payload != '') {
+                if (msg.payload !== null && msg.payload !== '') {
                     var lowerTopic = msg.topic.toString().toLowerCase();
 
                     if (!node.values[lowerTopic]) {
                         node.values[lowerTopic] = [];
                     }
-                    node.values[lowerTopic].push(parseInt(msg.payload, 10));
+                    node.values[lowerTopic].push(parseFloat(msg.payload, 10));
                 }
 
             } catch (err) {
