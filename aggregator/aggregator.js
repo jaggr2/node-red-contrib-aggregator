@@ -30,10 +30,7 @@ module.exports = function (RED) {
         node.values = {};
 
         node.aggregate = function (list) {
-
-            var output = null;
-
-            if (list.length === 0) return null;
+            var output;
 
             switch (config.aggregationType) {
                 case "mean":
@@ -69,18 +66,16 @@ module.exports = function (RED) {
 
             for (var topic in node.values) {
                 if (node.values.hasOwnProperty(topic)) {
-                    var result = node.aggregate(node.values[topic]);
-
-                    if (result) results.push(result);
+                    if(node.values[topic].length > 0) {
+                        results.push(node.aggregate(node.values[topic]));
+                    }
                 }
             }
 
-            var output = node.aggregate(results);
-
-            if (output) {
+            if (results.length > 0) {
                 node.send({
                     topic: config.topic,
-                    payload: output
+                    payload: node.aggregate(results)
                 });
             }
 
