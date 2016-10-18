@@ -9,7 +9,7 @@
   "author": "Roger Jaggi",
   "license": "Apache-2.0",
   "dependencies": {
-    "simple-statistics": "^1.0.1"
+    "simple-statistics": "^2.0"
   },
   "node-red": {
     "nodes": {
