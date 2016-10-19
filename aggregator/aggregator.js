@@ -56,8 +56,8 @@ module.exports = function (RED) {
                 case "max":
                     output = simpleStatistics.max(list);
                     break;
-                    
-                    case "sum":
+
+                case "sum":
                     output = simpleStatistics.sumSimple(list);
                     break;
             }
