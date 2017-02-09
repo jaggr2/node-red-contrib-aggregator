@@ -70,7 +70,7 @@ module.exports = function (RED) {
 
             for (var topic in node.values) {
                 if (node.values.hasOwnProperty(topic)) {
-                    if(node.values[topic].length > 0) {
+                    if (node.values[topic].length > 0) {
                         results.push(node.aggregate(node.values[topic]));
                     }
                 }
@@ -90,7 +90,11 @@ module.exports = function (RED) {
 
             node.interval = setInterval(node.aggregateAll, node.intervalTimeout);
 
-            if (node.submitIncompleteInterval) node.aggregateAll();
+            if (config.submitIncompleteInterval) {
+                node.aggregateAll(); // aggregates and clears data 
+            } else {
+                node.values = {}; // throw away data 
+            }
 
         }, node.startupTimeout);
 

@@ -34,3 +34,6 @@ node_modules
 
 # Intellij
 .idea
+
+# VS Code
+.vscode/symbols.json

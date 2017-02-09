@@ -35,6 +35,11 @@ The aggregator stores the retrieved values per topic for the pending time span. 
 2. if the msg.payload doesn't contain a number, the aggregator node raises an exception which can be caught with the Catch node
 
 
+#### Submit incomplete interval on start? option
+The Aggregator node aggregates on a whole unit of time selected. For example, every 4 hours starting at 12:30:00 will aggregate at [16:00:00], 20:00:00, 00:00:00 etc. The first aggregation result at 16:00:00, containing the values over the first "incomplete" timespan of 3.5 hours (12:30 - 16:00), is only outputted if the "Submit incomplete interval on start?" option is selected. If the option is not selected, the first output would be at 20:00 with the values between 16:00 and 20:00.
+
+In practise this option should be deselected if you have to ensure that all aggregation results are based on an equal timespan. If this is not an issue or you explicitly want also the first values aggregated for your application, then this option should be selected.
+
 ### Installation
 In your Node-RED directory, execute:
 
@@ -45,6 +50,13 @@ npm install node-red-contrib-aggregator
 
 ### Contributing
 Please just raise a pull request on GitHub.
+
+### Contributors
+Many thanks to following people who helped finding bugs
+
+* alan-rpi
+* Paul-Reed
+* Drummondh
 
 
 ### Copyright and license
