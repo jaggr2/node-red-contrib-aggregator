@@ -1,65 +1,65 @@
-var simpleStatistics = require('simple-statistics');
+var simpleStatistics = require("simple-statistics");
 
 module.exports = function (RED) {
     function AggregatorNode(config) {
         RED.nodes.createNode(this, config);
-        var node = this;
 
+        var node = this;
         node.intervalCount = config["interval-count"];
         node.intervalUnits = config["interval-units"];
         node.absoluteStartupTime = new Date().getTime();
         node.factor = 1;
 
         switch (config.intervalUnits) {
-            case "s":
-                node.factor = 1000;
-                break;
-            case "m":
-                node.factor = 1000 * 60;
-                break;
-            case "h":
-                node.factor = 1000 * 60 * 60;
-                break;
-            case "d":
-                node.factor = 1000 * 60 * 60 * 24;
-                break;
+        case "s":
+            node.factor = 1000;
+            break;
+        case "m":
+            node.factor = 1000 * 60;
+            break;
+        case "h":
+            node.factor = 1000 * 60 * 60;
+            break;
+        case "d":
+            node.factor = 1000 * 60 * 60 * 24;
+            break;
         }
+
         node.intervalTimeout = node.factor * config.intervalCount;
         node.startupTimeout = node.intervalTimeout - (node.absoluteStartupTime % node.intervalTimeout);
-
         node.values = {};
 
         node.aggregate = function (list) {
             var output;
 
             switch (config.aggregationType) {
-                case "mean":
-                    output = simpleStatistics.mean(list);
-                    break;
+            case "mean":
+                output = simpleStatistics.mean(list);
+                break;
 
-                case "geometricMean":
-                    output = simpleStatistics.geometricMean(list);
-                    break;
+            case "geometricMean":
+                output = simpleStatistics.geometricMean(list);
+                break;
 
-                case "harmonicMean":
-                    output = simpleStatistics.harmonicMean(list);
-                    break;
+            case "harmonicMean":
+                output = simpleStatistics.harmonicMean(list);
+                break;
 
-                case "median":
-                    output = simpleStatistics.median(list);
-                    break;
+            case "median":
+                output = simpleStatistics.median(list);
+                break;
 
-                case "min":
-                    output = simpleStatistics.min(list);
-                    break;
+            case "min":
+                output = simpleStatistics.min(list);
+                break;
 
-                case "max":
-                    output = simpleStatistics.max(list);
-                    break;
+            case "max":
+                output = simpleStatistics.max(list);
+                break;
 
-                case "sum":
-                    output = simpleStatistics.sumSimple(list);
-                    break;
+            case "sum":
+                output = simpleStatistics.sumSimple(list);
+                break;
             }
 
             return output;
@@ -69,10 +69,8 @@ module.exports = function (RED) {
             var results = [];
 
             for (var topic in node.values) {
-                if (node.values.hasOwnProperty(topic)) {
-                    if (node.values[topic].length > 0) {
-                        results.push(node.aggregate(node.values[topic]));
-                    }
+                if (node.values.hasOwnProperty(topic) && node.values[topic].length > 0) {
+                    results.push(node.aggregate(node.values[topic]));
                 }
             }
 
@@ -87,7 +85,6 @@ module.exports = function (RED) {
         };
 
         node.primaryTimeout = setTimeout(function () {
-
             node.interval = setInterval(node.aggregateAll, node.intervalTimeout);
 
             if (config.submitIncompleteInterval) {
@@ -98,23 +95,27 @@ module.exports = function (RED) {
 
         }, node.startupTimeout);
 
-        this.on('input', function (msg) {
+        this.on("input", function (msg) {
             try {
-                if (msg.payload !== null && msg.payload !== '') {
-                    var lowerTopic = msg.topic.toString().toLowerCase();
+                if (msg.payload !== null && msg.payload !== "") {
+                    var lowerTopic = "";
+                    var topic = msg.topic;
+                    if (topic) {
+                        lowerTopic = topic.toString().toLowerCase();
+                    }
 
                     if (!node.values[lowerTopic]) {
                         node.values[lowerTopic] = [];
                     }
+
                     node.values[lowerTopic].push(parseFloat(msg.payload, 10));
                 }
-
             } catch (err) {
                 node.error(err.message);
             }
         });
 
-        this.on('close', function () {
+        this.on("close", function () {
             clearTimeout(node.primaryTimeout);
             clearInterval(node.interval);
         });
