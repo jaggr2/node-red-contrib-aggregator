@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    RED.nodes.registerType('aggregator',{
+    RED.nodes.registerType('aggregator', {
         category: 'analysis',
         color: '#E2D96E',
         defaults: {
@@ -43,31 +43,32 @@
         </select><br/>
     </div>
     <div class="form-row">
-        <label style="width: auto" for="node-input-submitIncompleteInterval">Submit incomplete interval on start?</label></input>
-        <input style="width: 50px" type="checkbox" id="node-input-submitIncompleteInterval">
+        <label style="width: auto" for="node-input-submitIncompleteInterval">Submit incomplete interval on start?</label>
+        <input style="width: 50px" type="checkbox" id="node-input-submitIncompleteInterval"></input>
     </div>
     <div class="form-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-        <input type="text" id="node-input-topic" style="width: 70%x">
+        <input type="text" id="node-input-topic" style="width: 70%x"></input>
     </div>
     <div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
-        <input type="text" id="node-input-name" placeholder="Name">
+        <input type="text" id="node-input-name" placeholder="Name"></input>
     </div>
 </script>
 
 <script type="text/x-red" data-help-name="aggregator">
-    <p>A node that combines multiple input messages over a time-span to one output message according to the specified aggregation method </p>
-    <p>The aggregator stores the retrieved values per topic for the pending time span. He assumes that every topic has the same mightiness,
-    regardless of how many values he retrieved per topic. Once the time span times out, this assumption leads to the following calculation of all retrieved values:
+    <p>A node that combines multiple input messages over a time-span to one output message according to the specified aggregation method.</p>
+    <p>The aggregator stores the retrieved values per topic for the pending time span. It assumes that every topic has the same mightiness,
+    regardless of how many values are retrieved per topic. Once the time span times out, this leads to the following calculation of all retrieved values:
         <ol>
             <li>Aggregation of all retrieved values per topic by the defined aggregation method</li>
-            <li>Aggregation of the aggregation results of each topic again by the defined aggregation method</li>
+            <li>Aggregation of the aggregated results per topic by the defined aggregation method one more time</li>
         </ol>
     </p>
-    <p>topic and error handling:<br />
+    <p>Topic and error handling:<br />
         <ol>
-        <li>msg.topic is handled case insensitive (converted to LowerCase)</li>
-        <li>if the msg.payload doesn't contain a number, the aggregator node raises an exception which can be caught with the Catch node</li>
+            <li>msg.topic is handled case insensitive (gets converted to lowercase)</li>
+            <li>If msg.payload doesn't contain a number, the aggregator node raises an exception which can be caught with the Catch node</li>
+        </ol>
     </p>
 </script>
