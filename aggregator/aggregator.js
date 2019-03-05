@@ -66,19 +66,30 @@ module.exports = function (RED) {
         };
 
         node.aggregateAll = function () {
-            var results = [];
-
-            for (var topic in node.values) {
-                if (node.values.hasOwnProperty(topic) && node.values[topic].length > 0) {
-                    results.push(node.aggregate(node.values[topic]));
+            if (config.submitPerTopic) {
+                for (var topic in node.values) {
+                    if (node.values.hasOwnProperty(topic) && node.values[topic].length > 0) {
+                        node.send({
+                            topic: topic,
+                            payload: node.aggregate(node.values[topic])
+                        });
+                    }
                 }
-            }
+            } else {
+                var results = [];
 
-            if (results.length > 0) {
-                node.send({
-                    topic: config.topic,
-                    payload: node.aggregate(results)
-                });
+                for (var topic in node.values) {
+                    if (node.values.hasOwnProperty(topic) && node.values[topic].length > 0) {
+                        results.push(node.aggregate(node.values[topic]));
+                    }
+                }
+
+                if (results.length > 0) {
+                    node.send({
+                        topic: config.topic,
+                        payload: node.aggregate(results)
+                    });
+                }
             }
 
             node.values = {};
