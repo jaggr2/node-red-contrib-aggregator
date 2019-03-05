@@ -16,6 +16,15 @@
         icon: "arrow-in.png",
         label: function() {
             return this.name||"aggregator";
+        },
+        oneditprepare: function () {
+            $("#node-input-submitPerTopic").change(function () {
+                if ($(this).is(":checked")) {
+                    $(".node-input-topic-row").hide();
+                } else {
+                    $(".node-input-topic-row").show();
+                }
+            });
         }
     });
 </script>
@@ -51,7 +60,7 @@
         <label style="width: auto" for="node-input-submitPerTopic">Submit one message per topic</label>
         <input style="width: 50px" type="checkbox" id="node-input-submitPerTopic"></input>
     </div>
-    <div class="form-row">
+    <div class="form-row node-input-topic-row">
         <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
         <input type="text" id="node-input-topic" style="width: 70%x"></input>
     </div>
