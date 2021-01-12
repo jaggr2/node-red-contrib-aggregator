@@ -29,7 +29,7 @@ module.exports = function (RED) {
         }
 
         node.intervalTimeout = node.factor * config.intervalCount;
-        node.startupTimeout = node.intervalTimeout - (node.absoluteStartupTime % node.intervalTimeout);
+        node.startupTimeout = node.intervalTimeout - (node.correctedStartupTime % node.intervalTimeout);
         node.values = {};
 
         node.aggregate = function (list) {
