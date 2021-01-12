@@ -7,7 +7,10 @@ module.exports = function (RED) {
         var node = this;
         node.intervalCount = config["interval-count"];
         node.intervalUnits = config["interval-units"];
-        node.absoluteStartupTime = new Date().getTime();
+        node.absoluteStartupTime = new Date();
+        node.absoluteStartupTime.setMinutes(node.absoluteStartupTime.getMinutes() - node.absoluteStartupTime.getTimezoneOffset());
+        node.correctedStartupTime = node.absoluteStartupTime.getTime();
+
         node.factor = 1;
 
         switch (config.intervalUnits) {
