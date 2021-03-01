@@ -112,17 +112,17 @@ module.exports = function (RED) {
         this.on("input", function (msg) {
             try {
                 if (msg.payload !== null && msg.payload !== "") {
-                    var lowerTopic = "";
+                    var stringTopic = "";
                     var topic = msg.topic;
                     if (topic) {
-                        lowerTopic = topic.toString().toLowerCase();
+                        stringTopic = topic.toString();
                     }
 
-                    if (!node.values[lowerTopic]) {
-                        node.values[lowerTopic] = [];
+                    if (!node.values[stringTopic]) {
+                        node.values[stringTopic] = [];
                     }
 
-                    node.values[lowerTopic].push(parseFloat(msg.payload, 10));
+                    node.values[stringTopic].push(parseFloat(msg.payload, 10));
                 }
             } catch (err) {
                 node.error(err.message);
